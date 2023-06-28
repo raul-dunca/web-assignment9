@@ -1,0 +1,145 @@
+﻿@using Asp_Lab.Models;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>GetDocuments</title>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <style>
+
+        label {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.edit-btn', function () {
+                var id = $(this).data('id');
+                var author = $(this).data('author');
+                var title = $(this).data('title');
+                var pages = $(this).data('pages');
+                var type = $(this).data('type');
+                var format = $(this).data('format');
+
+                $.get("/Main/UpdateDocument", { id: id, author: author, title: title, pages: pages, type: type, format: format},
+                    function (data, status) {
+                        var redirectUrl = "/Main/UpdateDocument?id=" + id + "&author=" + author + "&title=" + title + "&pages=" + pages + "&type=" + type + "&format=" + format;
+                        window.location.href = redirectUrl;
+                    });
+            });
+        });
+
+
+
+        $(document).ready(function () {
+            $(document).on('click', '.delete-btn', function () {
+                var id_value = $(this).data('id');
+                if (confirm("Are you sure you want to delete this document?")) {
+                    $.post("/Main/DeleteDocument", { id: id_value },
+                        function (data, status) {
+                            window.location.href = "/Main/GetDocuments";
+                        })
+                }
+            });
+        });
+
+
+
+
+        var prevDocumentFormat = '';
+        var prevDocumentType = '';
+        $(document).ready(function () {
+
+            $(document).on('click', '#filtebtn', function () {
+                var documentFormat = $('#documentFormat').val();
+                var documentType = $('#documentType').val();
+                var label = 'Operatia anterioara: lista documentelor';
+                if (prevDocumentFormat != '') {
+                    label += ' cu formatul ' + prevDocumentFormat;
+                }
+                if (prevDocumentType != '') {
+                    label += ' de tipul ' + prevDocumentType;
+                }
+                label += ':';
+                $('h1').text(label);
+                prevDocumentFormat = documentFormat;
+                prevDocumentType = documentType;
+                $.post("/Main/FilterDocuments", { format: documentFormat, type: documentType },
+                    function (data, status) {
+
+                        $("#maindiv").html(data);
+                    })
+
+            });
+        });
+    </script>
+</head>
+<body style="background-color: #E6E6FA; color: #708090;">
+
+    <nav style="text-align: center;">
+        <a style="margin:20px" href="#">Browse Document</a>
+        <a style="margin:20px" href="/Main/AddDocument">Add Document</a>
+        
+
+    </nav>
+    <br>
+    <br>
+    <h1 style="text-align: center;">Lista documentelor:</h1>
+    <br>
+
+    <div style="text-align: center;">
+        <label for="documentType">Type:</label>
+        <input type="text" id="documentType" name="documentType"><br><br>
+        <label for="documentFormat">Fromat:</label>
+        <input type="text" id="documentFormat" name="documentFormat"><br><br>
+        <button type="button" id="filtebtn">Filter</button>
+    </div>
+
+    <br>
+
+    <div style="display: flex; justify-content: center; ">
+        <div id="maindiv">
+            @{
+                List<Document> document_list = (List<Document>)
+                    ViewData["documentList"];
+            }
+            <table border='1'>
+                <tr>
+                    <th>Id</th>
+                    <th>Author</th>
+                    <th>Title</th>
+                    <th>NrOfPages</th>
+                    <th>Type</th>
+                    <th>Format</th>
+                    <th>Operation</th>
+                </tr>
+                @foreach (Document d in document_list)
+                {
+            <tr>
+                <td>@d.Id</td>
+                <td>@d.Author</td>
+                <td>@d.Title</td>
+                <td>@d.NrOfPages</td>
+                <td>@d.Type</td>
+                <td>@d.Format</td>
+                <td>
+                    <button class="edit-btn" data-id=@d.Id data-author=@d.Author data-title=@d.Title data-pages=@d.NrOfPages data-type=@d.Type data-format=@d.Format>Edit</button>
+                    <button class="delete-btn" data-id=@d.Id>Delete</button>
+                </td>
+            </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+
+    <style>
+
+        label {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('#loginbtn').click(function () {
+                var username = $('#username').val();
+                var password = $('#password').val();
+                if (!(username === "" || password === "")) {
+
+                    $.post("/Main/Check", {
+                            username: $('#username').val(),
+                            password: $('#password').val()
+                        },
+
+                            function (data, status) {
+                                if (data === "true") {
+
+                                    window.location.href = "/Main/GetDocuments";
+                                } else {
+
+                                    window.location.href = "/Main/ErrorLogin";
+                                }
+                            })
+                    
+                }
+                else {
+                    alert("Please DONT leave any empty fields!!!");
+                }
+            });
+        });
+    </script>
+
+</head>
+<body style="background-color: #E6E6FA; color: #708090;">
+
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <form style="text-align: center;">
+
+
+
+
+
+        <label for="username">Username: </label>
+        <input id="username" name="username" type="text">
+
+
+
+
+        <br>
+        <br>
+
+        <label for="password">Password: </label>
+        <input id="password" name="password" type="text">
+
+
+        <br>
+        <br>
+
+
+
+        <input style="height: 30px ;width: 120px; margin-left: 50px;" id="loginbtn" type="button" value="Login" />
+    </form>
+
+
+
+</body>
+</html>

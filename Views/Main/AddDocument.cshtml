@@ -1,0 +1,121 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddDocument</title>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+
+    <style>
+
+        label {
+            display: inline-block;
+            width: 100px;
+            text-align: right;
+        }
+    </style>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#button').click(function () {
+                var pages = $('#nr_of_pages').val();
+                var author = $('#author').val();
+                var title = $('#title').val();
+                var type = $('#type').val();
+                var format = $('#format').val();
+                if (!(pages === "" || author === "" || title === "" || type === "" || format === "")) {
+                    if (!(/[^0-9]/.test(pages))) {
+                        $.get("/Main/SaveDocument", {
+                            author: $('#author').val(),
+                            title: $('#title').val(),
+                            nr_of_pages: $('#nr_of_pages').val(),
+                            type: $('#type').val(),
+                            format: $('#format').val()
+                        },
+
+                            function (data, status) {
+                                if (status === "success") {
+
+                                    window.location.href = "/Main/GetDocuments";
+                                } else {
+
+                                    alert("Error adding document: " + data);
+                                }
+                            })
+                    }
+                    else {
+
+                        alert("The NrOfPages field should only contain integer postivie numbers.");
+                    }
+                }
+                else {
+                    alert("Please DONT leave any empty fields!!!");
+                }
+            });
+        });
+    </script>
+
+</head>
+<body style="background-color: #E6E6FA; color: #708090;">
+
+        <nav style="text-align: center;">
+            <a style="margin:20px" href="/Main/GetDocuments">Browse Document</a>
+            <a style="margin:20px" href="#">Add Document</a>
+        </nav>
+
+   
+
+        <br>
+        <br>
+
+        <form  style="text-align: center;">
+
+            <label for="author">Author: </label>
+            <input id="author" name="author" type="text">
+
+
+            <br>
+            <br>
+
+            <label for="title">Title: </label>
+            <input id="title" name="title" type="text">
+
+
+            <br>
+            <br>
+
+
+            <label for="nr_of_pages">NrOfPages: </label>
+            <input id="nr_of_pages" name="nr_of_pages" type="number">
+
+
+            <br>
+            <br>
+
+
+            <label for="type">Type: </label>
+            <input id="type" name="type" type="text">
+
+
+            <br>
+            <br>
+
+
+            <label for="format">Format: </label>
+            <input id="format" name="format" type="text">
+
+            <br><br><br><br>
+
+            <input style="height: 30px ;width: 120px; margin-left: 50px;" id="button" type="button" value="Add document" />
+        </form>
+
+
+
+</body>
+</html>
